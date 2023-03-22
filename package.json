@@ -28,13 +28,11 @@
       },
       {
         "command": "my-test-extension.generateCode",
-        "title": "MyTestExtension: Generate code",
-        "enablement": "editorLangId == typescript"
+        "title": "MyTestExtension: Generate code"
       },
       {
         "command": "my-test-extension.refactorCode",
-        "title": "MyTestExtension: Refactor code",
-        "enablement": "editorLangId == typescript"
+        "title": "MyTestExtension: Refactor code"
       }
     ]
   },
