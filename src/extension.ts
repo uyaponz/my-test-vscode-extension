@@ -1,26 +1,33 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+import { EXTENSION_NAME } from './constants';
+import { generateCode, refactorCode, registerOpenAIApiKey, unregisterOpenAIApiKey } from './commands';
+
 export function activate(context: vscode.ExtensionContext) {
+  const secrets: vscode.SecretStorage = context.secrets;
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "my-test-extension" is now active!');
+  /** OpenAIのAPIキーをSecretStorageに格納するコマンド */
+  const registerOpenAIApiKeyDisposable = vscode.commands.registerCommand(`${EXTENSION_NAME}.registerOpenAIApiKey`, () =>
+    registerOpenAIApiKey(secrets)
+  );
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('my-test-extension.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from my-test-extension!');
-	});
+  /** SecretStorageに格納したOpenAIのAPIキーを削除するコマンド */
+  const unregisterOpenAIApiKeyDisposable = vscode.commands.registerCommand(`${EXTENSION_NAME}.unregisterOpenAIApiKey`, () =>
+    unregisterOpenAIApiKey(secrets)
+  );
 
-	context.subscriptions.push(disposable);
+  /** 当該行に記載の内容でソースコードを生成するコマンド */
+  const generateCodeDisposable = vscode.commands.registerCommand(`${EXTENSION_NAME}.generateCode`, () => generateCode(secrets));
+
+  /** 当該行に記載のソースコードをリファクタリングするコマンド */
+  const refactorCodeDisposable = vscode.commands.registerCommand(`${EXTENSION_NAME}.refactorCode`, () => refactorCode(secrets));
+
+  context.subscriptions.push(
+    registerOpenAIApiKeyDisposable,
+    unregisterOpenAIApiKeyDisposable,
+    generateCodeDisposable,
+    refactorCodeDisposable
+  );
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}
